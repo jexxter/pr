@@ -1,38 +1,34 @@
-FROM phusion/baseimage:0.9.18
-MAINTAINER ninthwalker
+FROM alpine:3.3
+MAINTAINER ninthwalker <ninthwalker@gmail.com>
 
 VOLUME /config
 EXPOSE 6878
 
-# Use baseimage-docker's init system
-CMD ["/sbin/my_init"]
+ENV BUILD_PACKAGES ruby ruby-dev
+# removed bash and curl-dev
+#ENV RUBY_PACKAGES
+ENV BUNDLER_VERSION 1.12.3
 
-#copy plexReport files
+#copy nowShowing files
 COPY root/ /
+WORKDIR /opt/gem
 
-# Configure user nobody to match unRAID's settings.
-RUN \
- usermod -u 99 nobody && \
- usermod -g 100 nobody && \
- usermod -d /home nobody && \
- chown -R nobody:users /home
+RUN apk add --no-cache \
+$BUILD_PACKAGES \
+ruby-json \
+make \
+gcc
+# ruby-io-console \
+#ruby-irb 
+#ruby-rake
+#ruby-rdoc
+# $RUBY_PACKAGES \
+# may need build-base (includes make, gcc and others, but is large (like 100mb)
 
-# Set correct environment variables
-ENV HOME /root 
-ENV DEBIAN_FRONTEND noninteractive 
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8 
-ENV LANGUAGE en_US.UTF-8
+RUN gem install bundler -v $BUNDLER_VERSION --no-ri --no-rdoc && \
+bundle config --global silence_root_warning 1 && \
+bundle install
 
+WORKDIR /config
 
-# install dependencies
-RUN \
- add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty universe multiverse" && \
- add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates universe multiverse" && \
- apt-get update -q && \
- apt-get install -qy ruby ruby-dev git make gcc && \
- apt-get clean -y && \
- rm -rf /var/lib/apt/lists/* /var/tmp/* /tmp/* && \
- cd /opt/gem && \
- gem install bundler -v 1.12.3 && \
- bundle install
+CMD ["ruby", "-run", "-e", "httpd", ".", "-p", "6878"]
