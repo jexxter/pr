@@ -4,7 +4,7 @@ MAINTAINER ninthwalker <ninthwalker@gmail.com>
 VOLUME /config
 EXPOSE 6878
 
-ENV RUBY_PACKAGES ruby ruby-dev ruby-io-console
+ENV RUBY_PACKAGES ruby ruby-dev ruby-json ruby-io-console
 ENV BUNDLER_VERSION 1.12.3
 
 #copy app files
@@ -13,7 +13,6 @@ WORKDIR /opt/gem
 
 RUN apk add --no-cache \
 $RUBY_PACKAGES \
-curl-dev \
 make \
 gcc
 
