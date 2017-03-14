@@ -9,7 +9,7 @@ ENV BUNDLER_VERSION 1.12.3
 
 #copy app files
 COPY root/ / && \
-s6-overlay /
+s6-overlay/ /
 WORKDIR /opt/gem
 
 RUN apk add --no-cache \
@@ -24,5 +24,5 @@ bundle install
 
 WORKDIR /config
 
-ENTRYPOINT [/init]
+ENTRYPOINT ["/init"]
 CMD ["ruby", "-run", "-e", "httpd", ".", "-p", "6878"]
