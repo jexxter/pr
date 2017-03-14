@@ -27,8 +27,8 @@ gcc
 
 RUN gem install bundler -v $BUNDLER_VERSION --no-ri --no-rdoc && \
 bundle config --global silence_root_warning 1 && \
-bundle install && \
-rc-update add local default
+bundle install
+RUN rc-update add local default
 
 WORKDIR /config
 
