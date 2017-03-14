@@ -8,8 +8,7 @@ ENV RUBY_PACKAGES ruby ruby-dev ruby-io-console
 ENV BUNDLER_VERSION 1.12.3
 
 #copy app files
-COPY root/ / && \
-s6-overlay/ /
+COPY root/ s6-overlay/ /
 WORKDIR /opt/gem
 
 RUN apk add --no-cache \
