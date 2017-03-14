@@ -13,6 +13,7 @@ WORKDIR /opt/gem
 
 RUN apk add --no-cache \
 $RUBY_PACKAGES \
+curl-dev \
 make \
 gcc
 
