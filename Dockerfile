@@ -9,7 +9,7 @@ ENV BUILD_PACKAGES ruby ruby-dev
 #ENV RUBY_PACKAGES
 ENV BUNDLER_VERSION 1.12.3
 
-#copy nowShowing files
+#copy app files
 COPY root/ /
 WORKDIR /opt/gem
 
@@ -27,7 +27,8 @@ gcc
 
 RUN gem install bundler -v $BUNDLER_VERSION --no-ri --no-rdoc && \
 bundle config --global silence_root_warning 1 && \
-bundle install
+bundle install && \
+rc-update add local default
 
 WORKDIR /config
 
