@@ -20,7 +20,7 @@ mkdir -p /etc/service/httpserver
 ADD /root/add_web_body.sh /etc/my_init.d/add_web_body.sh
 ADD /root/httpserver.sh /etc/service/httpserver/run
 
-# Configure user nobody to match unRAID's settings
+# Configure user nobody to match unRAID's settings.
  RUN \
  usermod -u 99 nobody && \
  usermod -g 100 nobody && \
