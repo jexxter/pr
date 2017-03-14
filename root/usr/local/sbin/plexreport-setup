@@ -10,6 +10,7 @@ require_relative '/var/lib/plexReport/plexTv'
 #
 # Author: Brian Stascavage
 # Email: brian@stascavage.com
+# Modified by: ninthwalker@gmail.com
 #
 class Setup
     include HTTParty
@@ -39,58 +40,61 @@ class Setup
     end
 
     def setPlexApiKey
-        username = ask("Enter your Plex username:") { |q| q.echo = true }
-        password = ask("Enter your Plex Password.  NOTE: This will not be saved anywhere") { |q| q.echo = "*" }
+		plexusername = ENV['PLEX_USERNAME'] 
+		plexpassword = ENV['PLEX_PASSWORD'] || []
 
-        auth = {:username => username, :password => password}
-        devices = $plex.get("/devices.xml", auth, true)
+		if plexpassword.empty?
+			$config['plex']['api_key'] = ENV['PLEX_TOKEN']
+		else
+			auth = {:username => plexusername, :password => plexpassword}
+			devices = $plex.get("/devices.xml", auth, true)
 
-        devices['MediaContainer']['Device'].each do | device, index |
-            if device['provides'] == 'server'
-                puts "Your API key is: #{device['token']}"
-                $config['plex']['api_key'] = device['token']
-                return true
-            end 
+			devices['MediaContainer']['Device'].each do | device, index |
+				if device['provides'] == 'server'
+					$config['plex']['api_key'] = device['token']
+					return true
+				end 
 
-            if devices['MediaContainer']['Device'].size - 1 == index
-                puts "Cannot find Plex Server.  Exiting"
-                abort
-            end
-        end
-    end
+				if devices['MediaContainer']['Device'].size - 1 == index
+					puts "Cannot find Plex Server.  Exiting"
+					abort
+				end
+			end
+		end
+	end
 
     def setServer
-        $config['plex']['server'] = ask("Enter your Plex server IP (default: localhost)") { |q| q.echo = true }
+        $config['plex']['server'] = ENV['PLEX_SERVER_IP']
         if $config['plex']['server'].empty?
-            $config['plex']['server'] = 'localhost'
+			$config['plex']['server'] = 'localhost'
         end
     end
 
     def setEmail
-        $config['mail']['address'] = ask("Enter your SMTP server (default: smtp.gmail.com)") { |q| q.echo = true }
+        $config['mail']['address'] = ENV['SMTP_SERVER']
         if $config['mail']['address'].empty?
             $config['mail']['address'] = 'smtp.gmail.com'
         end
 
-        $config['mail']['port'] = ask("Enter your SMTP port (default: 587)") { |q| q.echo = true }
+        $config['mail']['port'] = ENV['SMTP_PORT']
         if $config['mail']['port'].empty?
             $config['mail']['port'] = 587
         end
 
-        $config['mail']['username'] = ask("Enter your SMTP username/email address (For Gmail, use email address)") { |q| q.echo = true }
-        $config['mail']['password'] = ask("Enter your email password (This will only be saved in config.yaml)") { |q| q.echo = "*" }
+        $config['mail']['username'] = ENV['EMAIL_USERNAME']
+        $config['mail']['password'] = ENV['EMAIL_PASSWORD']
 
-        $config['mail']['from'] = ask("Display name of the sender (default: Plex Server)") { |q| q.echo = true }
+        $config['mail']['from'] = ENV['SENDER_DISPLAY_NAME']
         if $config['mail']['from'].empty?
             $config['mail']['from'] = 'Plex Server'
         end
 
-        $config['mail']['subject'] = ask("Email subject (default: Plex Server Summary)") { |q| q.echo = true }
+        $config['mail']['subject'] = ENV['EMAIL_SUBJECT']
         if $config['mail']['subject'].empty?
             $config['mail']['subject'] = 'Plex Server Summary'
         end
 
-        $config['email']['title'] = ask("Display title in the Email body (default: Plex Server Summary)") { |q| q.echo = true }
+        $config['email']['title'] = ENV['EMAIL_BODY_DISPLAY_TITLE']
         if $config['email']['title'].empty?
             $config['email']['title'] = 'Plex Server Summary'
         end
@@ -102,7 +106,6 @@ class Setup
         self.setEmail
 
         File.open('/config/config.yaml', 'w') {|f| f.write $config.to_yaml }
-        puts "Writing information to config.yaml"
     end
 end
 

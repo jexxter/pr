@@ -11,7 +11,7 @@ require 'httparty'
 class PlexTv
     include HTTParty
 
-    base_uri 'http://plex.tv/'
+    base_uri 'https://plex.tv/'
     format :xml
 
     def initialize(config)
