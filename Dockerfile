@@ -8,21 +8,21 @@ ENV BUNDLER_VERSION 1.12.3
 VOLUME /config
 EXPOSE 6878
 
-#copy app files
+#copy app and s6-overlay files
 COPY root/ /
-COPY s6-overlay/ / 
 WORKDIR /config
 
 RUN apk add --no-cache \
 $RUBY_PACKAGES \
 curl-dev \
 make \
-gcc
-#tar
-#gzip
+gcc \
+tar \
+gzip
 
-#ADD https://github.com/just-containers/s6-overlay/releases/download/v1.19.1.1/s6-overlay-amd64.tar.gz /tmp/
-#RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
+ADD https://github.com/just-containers/s6-overlay/releases/download/v1.19.1.1/s6-overlay-amd64.tar.gz /tmp/
+RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
+rm /tmp/*
 
 RUN \
 cd /opt/gem && \
