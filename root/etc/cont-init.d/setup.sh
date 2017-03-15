@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/with-contenv sh
 
 # Added to check if new web_email_body.erb file exists, if not, add.
 if [ -f /config/web_email_body.erb ]; then
