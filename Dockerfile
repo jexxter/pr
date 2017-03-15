@@ -9,7 +9,8 @@ VOLUME /config
 EXPOSE 6878
 
 #copy app files
-#COPY root/ s6-overlay/ /
+#COPY root/ /
+# removed s6-overlay/ / 
 WORKDIR /config
 
 RUN apk add --no-cache \
