@@ -9,7 +9,7 @@ VOLUME /config
 EXPOSE 6878
 
 #copy app files
-#COPY root/ /
+COPY root/ /
 # removed s6-overlay/ / 
 WORKDIR /config
 
