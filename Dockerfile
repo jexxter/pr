@@ -9,20 +9,14 @@ VOLUME /config
 EXPOSE 6878
 
 #copy app and s6-overlay files
-COPY root/ /
+COPY root/ s6-overlay/ /
 WORKDIR /config
 
 RUN apk add --no-cache \
 $RUBY_PACKAGES \
 curl-dev \
 make \
-gcc \
-tar \
-gzip
-
-ADD https://github.com/just-containers/s6-overlay/releases/download/v1.19.1.1/s6-overlay-amd64.tar.gz /tmp/
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
-rm /tmp/*
+gcc 
 
 RUN \
 cd /opt/gem && \
