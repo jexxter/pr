@@ -8,7 +8,7 @@ ENV BUNDLER_VERSION 1.12.3
 VOLUME /config
 EXPOSE 6878
 
-#copy app and s6-overlay files.
+#copy app and s6-overlay files
 COPY root/ s6-overlay/ /
 WORKDIR /config
 
